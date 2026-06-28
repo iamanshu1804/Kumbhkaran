@@ -31,6 +31,43 @@
             color: var(--black);
             overflow-x: hidden;
             scroll-behavior: smooth; 
+            touch-action: pan-y; /* Important for the touch-trail to allow scrolling */
+        }
+
+        /* === THE KUMBHKARAN ENERGY BAR === */
+        #energy-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 25px;
+            background-color: var(--pastel-grey);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        #energy-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%; /* Starts full */
+            background-color: var(--red);
+            transition: width 0.1s linear;
+        }
+
+        #energy-text {
+            position: relative;
+            z-index: 10001;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--white);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); 
         }
 
         /* === SECTION LAYOUT === */
@@ -64,6 +101,7 @@
         /* === SPECIFIC SECTIONS === */
         #intro {
             background: linear-gradient(135deg, var(--white), var(--pastel-red));
+            padding-top: 40px; /* Make room for energy bar */
         }
 
         #basketball {
@@ -117,6 +155,52 @@
             transform: translateY(0);
         }
 
+        /* === EMOJI TRAIL CSS === */
+        .trail-emoji {
+            position: fixed;
+            pointer-events: none; 
+            z-index: 9999;
+            font-size: 1.5rem;
+            animation: trailFade 0.8s ease-out forwards;
+            transform: translate(-50%, -50%); 
+        }
+
+        @keyframes trailFade {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -100%) scale(0.5); }
+        }
+
+        /* === SUGAR RUSH CSS === */
+        #sugar-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            pointer-events: none; 
+            z-index: 9998;
+            overflow: hidden;
+        }
+        .sweet-drop {
+            position: absolute;
+            font-size: 2.5rem;
+            animation: sugarFall linear forwards;
+        }
+        @keyframes sugarFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1;}
+            80% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* === SCRATCH CANVAS CSS === */
+        #scratchCanvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 10; 
+            cursor: crosshair;
+            transition: opacity 0.8s ease;
+            touch-action: none; 
+        }
+
         /* === BUTTONS === */
         .scroll-indicator {
             position: absolute;
@@ -137,6 +221,7 @@
             position: absolute; 
             transition: all 0.2s ease;
             box-shadow: 0 4px 15px rgba(217, 56, 56, 0.4);
+            z-index: 1;
         }
 
         #hiddenBtn {
@@ -150,6 +235,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 2px 5px;
             opacity: 0.5; 
+            z-index: 1;
         }
 
         /* === CINEMATIC COUNTDOWN OVERLAY === */
@@ -159,13 +245,12 @@
             top: 0; left: 0;
             width: 100vw; height: 100vh;
             background-color: var(--red);
-            z-index: 9999;
+            z-index: 10002;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
-        /* Wrapper that holds both "Years" and the Number so they slide together */
         #counter-wrapper {
             display: flex;
             flex-direction: column;
@@ -195,7 +280,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* 3D Flip Animation for the calendar pages */
         .flip-anim {
             animation: flipPage 0.15s ease-in-out;
         }
@@ -205,23 +289,21 @@
             100% { transform: perspective(400px) rotateX(0deg); opacity: 1; }
         }
 
-        /* The animation to drop the 19 to the bottom */
         .slide-down-anim {
             transform: translateY(35vh) scale(0.4);
             opacity: 0.5;
         }
 
-        /* The final message pop-up formatted for the pastel theme */
         #birthday-message {
             display: none;
-            position: absolute; /* Allows it to sit in the center */
+            position: absolute; 
             text-align: center;
             background: var(--white);
             padding: 40px 20px;
             border-radius: 20px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);
             width: 85%;
-            transform: scale(0); /* Starts shrunk */
+            transform: scale(0); 
         }
 
         .pop-up-anim {
@@ -249,9 +331,16 @@
 </head>
 <body>
 
+    <div id="energy-bar-container">
+        <div id="energy-fill"></div>
+        <div id="energy-text">Kumbhkaran Energy Level</div>
+    </div>
+
+    <div id="sugar-container"></div>
+
     <section id="intro">
         <h1 class="fade-in">Helloo Bandariya (aka dentist ki favourite customer).</h1>
-        <p class="fade-in">Teen hi kaam hai tere pass sona, meetha khana ya "me ro dungi bolna" but abhi mat rona (kharab screen pe paani gira toh screen aur kharab hogi)</p>
+        <p class="fade-in">Teen hi kaam hai tere pass sona, <span id="sweet-trigger" style="text-decoration: underline dashed var(--red); cursor: pointer; font-weight: bold;">meetha khana</span> ya "me ro dungi bolna" but abhi mat rona (kharab screen pe paani gira toh screen aur kharab hogi)</p>
         <p class="fade-in" style="margin-top: 15px; font-size: 0.9rem;">(Keep scrolling, lazyass)</p>
         <div class="scroll-indicator">↓</div>
     </section>
@@ -278,8 +367,10 @@
     </section>
 
     <section id="finale">
+        <canvas id="scratchCanvas"></canvas>
+        
         <button id="runawayBtn">Tap Me</button>
-        <button id="hiddenBtn">Lmao dobi tap here</button>
+        <button id="hiddenBtn">abe dobi tap here</button>
     </section>
 
     <section id="countdown-overlay">
@@ -289,13 +380,77 @@
         </div>
         
         <div id="birthday-message">
-            <h1>Happy Birthday, Dhimahi!</h1>
+            <h1>Happy Birthday, Dhimahi! 🥳</h1>
             <p>Have a great year (with less traumas) ahead and keep that crazy energy.</p>
         </div>
     </section>
 
     <script>
-        // --- 1. SCROLL FADE-IN LOGIC ---
+        // --- 0. FORCE SCROLL TO TOP ON RELOAD ---
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
+        // --- 1. EMOJI TRAIL LOGIC ---
+        const trailEmojis = ['🏀', '🐒', '💤', '✨', '🎨'];
+        let emojiIndex = 0;
+        let lastEmojiTime = 0;
+
+        function createTrailEmoji(x, y) {
+            if (Date.now() - lastEmojiTime < 50) return; 
+            lastEmojiTime = Date.now();
+
+            const emojiEl = document.createElement('div');
+            emojiEl.classList.add('trail-emoji');
+            
+            emojiEl.innerText = trailEmojis[emojiIndex];
+            emojiIndex = (emojiIndex + 1) % trailEmojis.length;
+
+            emojiEl.style.left = `${x}px`;
+            emojiEl.style.top = `${y}px`;
+
+            document.body.appendChild(emojiEl);
+
+            setTimeout(() => {
+                emojiEl.remove();
+            }, 800);
+        }
+
+        document.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            createTrailEmoji(touch.clientX, touch.clientY);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            createTrailEmoji(e.clientX, e.clientY);
+        });
+
+        // --- 2. ENERGY BAR LOGIC ---
+        const energyFill = document.getElementById('energy-fill');
+        const energyText = document.getElementById('energy-text');
+        
+        window.addEventListener('scroll', () => {
+            const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+            // Prevent division by zero if scroll height is small
+            if (scrollTotal <= 0) return; 
+            
+            const scrollPercent = (window.scrollY / scrollTotal) * 100;
+            const energyRemaining = Math.max(0, 100 - scrollPercent);
+            energyFill.style.width = `${energyRemaining}%`;
+
+            if (energyRemaining < 5) {
+                energyText.innerText = "Kumbhkaran Energy Depleted 💤";
+                energyText.style.color = "var(--black)";
+                energyText.style.textShadow = "none";
+            } else {
+                energyText.innerText = "Kumbhkaran Energy Level";
+                energyText.style.color = "var(--white)";
+                energyText.style.textShadow = "1px 1px 2px rgba(0,0,0,0.5)";
+            }
+        });
+
+        // --- 3. SCROLL FADE-IN LOGIC ---
         const observerOptions = {
             root: null,
             rootMargin: '0px',
@@ -314,7 +469,119 @@
             observer.observe(el);
         });
 
-        // --- 2. RAGEBAIT BUTTON LOGIC ---
+        // --- 4. SUGAR RUSH LOGIC ---
+        const sweetTrigger = document.getElementById('sweet-trigger');
+        const sugarContainer = document.getElementById('sugar-container');
+        const sweetEmojis = ['🍩', '🍫', '🍰', '🧁', '🍬', '🍭', '🍪'];
+
+        sweetTrigger.addEventListener('click', () => {
+            for (let i = 0; i < 60; i++) {
+                let sweet = document.createElement('div');
+                sweet.classList.add('sweet-drop');
+                sweet.innerText = sweetEmojis[Math.floor(Math.random() * sweetEmojis.length)];
+                
+                sweet.style.left = Math.random() * 100 + 'vw';
+                sweet.style.top = - (Math.random() * 20 + 10) + 'vh'; 
+                
+                let duration = Math.random() * 2.5 + 2; 
+                sweet.style.animation = `sugarFall ${duration}s linear forwards`;
+                
+                setTimeout(() => sweet.remove(), duration * 1000);
+                
+                sugarContainer.appendChild(sweet);
+            }
+        });
+
+        // --- 5. TRUE SCRATCH-OFF LOGIC ---
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const finaleSection = document.getElementById('finale');
+        let isDrawing = false;
+        let scratchCounter = 0; 
+        let isRevealed = false;
+
+        function setupCanvas() {
+            canvas.width = finaleSection.offsetWidth;
+            canvas.height = finaleSection.offsetHeight;
+            
+            ctx.fillStyle = '#E0E0E0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.font = 'bold 30px Poppins';
+            ctx.fillStyle = '#1A1A1A';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('Scratch to reveal', canvas.width / 2, canvas.height / 2);
+        }
+        
+        window.addEventListener('resize', setupCanvas);
+        setupCanvas();
+
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            let clientX = evt.clientX || (evt.touches && evt.touches[0].clientX);
+            let clientY = evt.clientY || (evt.touches && evt.touches[0].clientY);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function getScratchPercentage() {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            let transparent = 0;
+            
+            const stride = 4 * 10; 
+            const totalChecks = pixels.length / stride;
+
+            for (let i = 3; i < pixels.length; i += stride) {
+                if (pixels[i] < 128) { 
+                    transparent++;
+                }
+            }
+            return (transparent / totalChecks) * 100;
+        }
+
+        function scratch(evt) {
+            if (!isDrawing || isRevealed) return;
+            
+            // Only prevent default on touch devices when scratching
+            // This stops the screen from scrolling while she is trying to scratch
+            if(evt.type.includes('touch')) {
+                evt.preventDefault();
+            }
+            
+            const pos = getMousePos(evt);
+            
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 55, 0, Math.PI * 2); 
+            ctx.fill();
+            
+            scratchCounter++;
+            
+            if (scratchCounter % 15 === 0) {
+                const percent = getScratchPercentage();
+                
+                if (percent > 85) {
+                    isRevealed = true;
+                    canvas.style.opacity = '0';
+                    setTimeout(() => { canvas.style.pointerEvents = 'none'; }, 800);
+                }
+            }
+        }
+
+        canvas.addEventListener('mousedown', () => { isDrawing = true; });
+        canvas.addEventListener('mouseup', () => { isDrawing = false; });
+        canvas.addEventListener('mousemove', scratch);
+
+        canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); }, { passive: false });
+        canvas.addEventListener('touchend', () => { isDrawing = false; });
+        canvas.addEventListener('touchmove', scratch, { passive: false });
+
+
+        // --- 6. RAGEBAIT BUTTON LOGIC ---
         const runawayBtn = document.getElementById('runawayBtn');
         const hiddenBtn = document.getElementById('hiddenBtn');
         let tapCount = 0;
@@ -346,58 +613,44 @@
             }
         });
 
-        // --- 3. CINEMATIC TIMING LOGIC FOR COUNTDOWN ---
+        // --- 7. CINEMATIC TIMING LOGIC FOR COUNTDOWN ---
         const overlay = document.getElementById('countdown-overlay');
         const counterWrapper = document.getElementById('counter-wrapper');
         const calNumber = document.getElementById('calendar-number');
         const bdayMessage = document.getElementById('birthday-message');
 
         hiddenBtn.addEventListener('click', () => {
-            // Hide the background scroll
             document.body.style.overflow = 'hidden'; 
-            
-            // Show the red overlay screen
             overlay.style.display = 'flex';
             
             let count = 1;
             calNumber.innerText = count;
 
-            // This function creates the variable speed loop
             function flipNextNumber() {
                 if (count < 19) {
                     count++;
                     calNumber.innerText = count;
                     
-                    // Trigger the 3D flip animation
                     calNumber.classList.remove('flip-anim');
-                    void calNumber.offsetWidth; // Force browser reflow
+                    void calNumber.offsetWidth; 
                     calNumber.classList.add('flip-anim');
 
-                    // Math to make the delay start small (fast) and grow larger (slow)
                     let progress = count / 19;
                     let nextDelay = 40 + (Math.pow(progress, 4) * 350); 
                     
-                    // Wait the calculated delay, then flip again
                     setTimeout(flipNextNumber, nextDelay);
                     
                 } else {
-                    // We hit 19! Take a 500ms pause here.
                     setTimeout(() => {
-                        
-                        // Slide the wrapper (Years + 19) to the bottom
                         counterWrapper.classList.add('slide-down-anim');
-                        
-                        // Wait a moment for the slide down to start, then pop up the card
                         setTimeout(() => {
                             bdayMessage.style.display = 'block';
                             bdayMessage.classList.add('pop-up-anim');
                         }, 400); 
-
-                    }, 500); // <-- The exact 500ms pause
+                    }, 500); 
                 }
             }
 
-            // Start the sequence
             setTimeout(flipNextNumber, 50);
         });
     </script>
