@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Dhimahi 🏀</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === COLOR PALETTE & VARIABLES === 
+           Change these colors if you want to tweak the theme */
+        :root {
+            --red: #D93838;
+            --black: #1A1A1A;
+            --white: #F8F9FA;
+            --pastel-red: #FFB3B3;
+            --pastel-grey: #E0E0E0;
+        }
+
+        /* === GLOBAL STYLES === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            /* Prevents weird selection highlighting on mobile */
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--black);
+            overflow-x: hidden;
+            /* This ensures the scroll is smooth */
+            scroll-behavior: smooth; 
+        }
+
+        /* === SECTION LAYOUT === 
+           Each 'section' takes up exactly one full screen height on mobile */
+        section {
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            text-align: center;
+        }
+
+        h1, h2 {
+            font-family: 'Caveat', cursive; /* The handwriting font */
+            color: var(--red);
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: var(--black);
+            max-width: 90%;
+            line-height: 1.6;
+        }
+
+        /* === SPECIFIC SECTIONS === */
+        
+        #intro {
+            background: linear-gradient(135deg, var(--white), var(--pastel-red));
+        }
+
+        #basketball {
+            background-color: var(--black);
+            color: var(--white);
+        }
+        #basketball h2 { color: var(--pastel-red); }
+        #basketball p { color: var(--pastel-grey); }
+
+        #bollywood {
+            background: linear-gradient(135deg, var(--pastel-red), var(--white));
+        }
+
+        #kumbhkaran {
+            background-color: var(--white);
+            border-top: 5px dashed var(--red);
+            border-bottom: 5px dashed var(--red);
+        }
+
+        #finale {
+            background-color: var(--black);
+            color: var(--white);
+        }
+
+        /* === ANIMATIONS === */
+        
+        /* The bouncing basketball animation */
+        .bounce {
+            font-size: 4rem;
+            animation: bounceAnim 1s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5);
+        }
+
+        @keyframes bounceAnim {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50px); }
+        }
+
+        /* The floating animation for elements */
+        .float {
+            animation: floatAnim 4s ease-in-out infinite;
+        }
+
+        @keyframes floatAnim {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Simple fade-in class for scrolling */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === BUTTONS & RAGEBAIT LOGIC === */
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            font-size: 2rem;
+            animation: floatAnim 2s infinite;
+            color: var(--red);
+        }
+
+        /* The button that runs away */
+        #runawayBtn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: var(--red);
+            color: var(--white);
+            border: none;
+            border-radius: 30px;
+            position: absolute; /* Needed for JS to move it around */
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(217, 56, 56, 0.4);
+        }
+
+        /* The tiny hidden button */
+        #hiddenBtn {
+            display: none; /* Hidden by default via JS later */
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.6rem;
+            color: var(--white);
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2px 5px;
+            opacity: 0.5; /* Hard to see */
+        }
+
+        /* === CALENDAR COUNTDOWN OVERLAY === */
+        
+        #countdown-overlay {
+            display: none; /* Hidden until triggered */
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: var(--red);
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #calendar-number {
+            font-family: 'Poppins', sans-serif;
+            font-size: 8rem;
+            font-weight: 800;
+            color: var(--white);
+            background-color: var(--black);
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #birthday-message {
+            display: none;
+            text-align: center;
+        }
+
+        #birthday-message h1 {
+            color: var(--white);
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        #birthday-message p {
+            color: var(--pastel-grey);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <section id="intro">
+        <h1 class="fade-in">Hey Monkey.</h1>
+        <p class="fade-in">Teen hi kaam hai tere pass sona, meetha khana ya "me ro dungi bolna" but abhi mat rona (kharab screen pe paani gira toh screen aur kharab hogi)</p>
+        <p class="fade-in" style="margin-top: 15px; font-size: 0.9rem;">(Keep scrolling, lazyass)</p>
+        <div class="scroll-indicator">↓</div>
+    </section>
+
+    <section id="basketball">
+        <div class="bounce fade-in">🏀</div>
+        <h2 class="fade-in">From the Court to the Pool</h2>
+        <p class="fade-in">To the girl who somehow balances being a designer, a swimmer, and a basketball menace.</p>
+        <div class="scroll-indicator" style="color: var(--pastel-red);">↓</div>
+    </section>
+
+    <section id="bollywood">
+        <div class="float fade-in" style="font-size: 3rem; margin-bottom: 20px;">🎬 ✨</div>
+        <h2 class="fade-in">Side chick ki main chick energy</h2>
+        <p class="fade-in">Bollywood se retarded and full brain rot person.</p>
+        <div class="scroll-indicator">↓</div>
+    </section>
+
+    <section id="kumbhkaran">
+        <div class="float fade-in" style="font-size: 4rem;">💤</div>
+        <h2 class="fade-in">Wake up, Kumbhkaran!</h2>
+        <p class="fade-in">You're officially a year older today. Time to do something about it.</p>
+        <div class="scroll-indicator">↓</div>
+    </section>
+
+    <section id="finale">
+        <button id="runawayBtn">Tap Me</button>
+        
+        <button id="hiddenBtn">Lmao dobi tap here</button>
+    </section>
+
+    <section id="countdown-overlay">
+        <div id="calendar-number">1</div>
+        <div id="birthday-message">
+            <h1>Happy Birthday, Dhimahi!</h1>
+            <p>Have a great year ahead (with less traumas).</p>
+        </div>
+    </section>
+
+    <script>
+        // --- 1. SCROLL FADE-IN LOGIC ---
+        // This makes elements appear smoothly as she scrolls down
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.3 // Triggers when 30% of the element is visible
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+
+        // --- 2. RAGEBAIT BUTTON LOGIC ---
+        const runawayBtn = document.getElementById('runawayBtn');
+        const hiddenBtn = document.getElementById('hiddenBtn');
+        let tapCount = 0;
+
+        runawayBtn.addEventListener('click', (e) => {
+            tapCount++;
+            
+            // Randomly generate new X and Y coordinates within the finale section
+            const sectionBounds = document.getElementById('finale').getBoundingClientRect();
+            const btnBounds = runawayBtn.getBoundingClientRect();
+            
+            // Calculate safe boundaries so the button doesn't go off-screen
+            const maxX = window.innerWidth - btnBounds.width - 20; 
+            const maxY = sectionBounds.height - btnBounds.height - 50;
+
+            const newX = Math.random() * maxX;
+            // Keep it somewhat within the bottom section height
+            const newY = Math.random() * (window.innerHeight * 0.6); 
+
+            runawayBtn.style.left = `${newX}px`;
+            runawayBtn.style.top = `${newY}px`;
+
+            // Change text to add to the ragebait
+            const texts = ["Missed!", "Too slow!", "Try again monkey", "Keep trying", "Almost!"];
+            if (tapCount <= texts.length) {
+                runawayBtn.innerText = texts[tapCount - 1];
+            } else {
+                runawayBtn.innerText = "Haha nope!";
+            }
+
+            // Show the tiny hidden button after 5 taps
+            if (tapCount === 5) {
+                hiddenBtn.style.display = 'block';
+            }
+        });
+
+
+        // --- 3. COUNTDOWN & FINAL MESSAGE LOGIC ---
+        const overlay = document.getElementById('countdown-overlay');
+        const calNumber = document.getElementById('calendar-number');
+        const bdayMessage = document.getElementById('birthday-message');
+
+        hiddenBtn.addEventListener('click', () => {
+            // Hide the background scroll completely
+            document.body.style.overflow = 'hidden'; 
+            
+            // Show the red overlay screen
+            overlay.style.display = 'flex';
+            
+            let count = 1;
+            calNumber.innerText = count;
+
+            // This interval counts up quickly (every 120 milliseconds)
+            const interval = setInterval(() => {
+                count++;
+                if (count <= 19) {
+                    calNumber.innerText = count;
+                    // Adding a slight CSS scale pop effect to simulate flipping
+                    calNumber.style.transform = "scale(1.1)";
+                    setTimeout(() => { calNumber.style.transform = "scale(1)"; }, 50);
+                } else {
+                    // Stop counting when we hit 19
+                    clearInterval(interval);
+                    // Hide the number box
+                    calNumber.style.display = 'none';
+                    // Show the final birthday text
+                    bdayMessage.style.display = 'block';
+                }
+            }, 120); // <-- Change this number (120) to make the countdown faster or slower
+        });
+    </script>
+</body>
+</html>
