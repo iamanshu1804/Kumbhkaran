@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Dhimahi 🏀</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === COLOR PALETTE & VARIABLES === */
+        :root {
+            --red: #D93838;
+            --black: #1A1A1A;
+            --white: #F8F9FA;
+            --pastel-red: #FFB3B3;
+            --pastel-grey: #E0E0E0;
+        }
+
+        /* === GLOBAL STYLES === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--black);
+            overflow-x: hidden;
+            scroll-behavior: smooth; 
+        }
+
+        /* === SECTION LAYOUT === */
+        section {
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            text-align: center;
+        }
+
+        h1, h2 {
+            font-family: 'Caveat', cursive; 
+            color: var(--red);
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: var(--black);
+            max-width: 90%;
+            line-height: 1.6;
+        }
+
+        /* === SPECIFIC SECTIONS === */
+        #intro {
+            background: linear-gradient(135deg, var(--white), var(--pastel-red));
+        }
+
+        #basketball {
+            background-color: var(--black);
+            color: var(--white);
+        }
+        #basketball h2 { color: var(--pastel-red); }
+        #basketball p { color: var(--pastel-grey); }
+
+        #bollywood {
+            background: linear-gradient(135deg, var(--pastel-red), var(--white));
+        }
+
+        #kumbhkaran {
+            background-color: var(--white);
+            border-top: 5px dashed var(--red);
+            border-bottom: 5px dashed var(--red);
+        }
+
+        #finale {
+            background-color: var(--black);
+            color: var(--white);
+        }
+
+        /* === ANIMATIONS === */
+        .bounce {
+            font-size: 4rem;
+            animation: bounceAnim 1s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5);
+        }
+        @keyframes bounceAnim {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50px); }
+        }
+
+        .float {
+            animation: floatAnim 4s ease-in-out infinite;
+        }
+        @keyframes floatAnim {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === BUTTONS === */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            font-size: 2rem;
+            animation: floatAnim 2s infinite;
+            color: var(--red);
+        }
+
+        #runawayBtn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: var(--red);
+            color: var(--white);
+            border: none;
+            border-radius: 30px;
+            position: absolute; 
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(217, 56, 56, 0.4);
+        }
+
+        #hiddenBtn {
+            display: none; 
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.6rem;
+            color: var(--white);
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2px 5px;
+            opacity: 0.5; 
+        }
+
+        /* === CINEMATIC COUNTDOWN OVERLAY === */
+        #countdown-overlay {
+            display: none; 
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: var(--red);
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Wrapper that holds both "Years" and the Number so they slide together */
+        #counter-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        #years-heading {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--white);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: -15px;
+            opacity: 0.9;
+        }
+
+        #calendar-number {
+            font-family: 'Poppins', sans-serif;
+            font-size: 8rem;
+            font-weight: 800;
+            color: var(--white);
+            background-color: var(--black);
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* 3D Flip Animation for the calendar pages */
+        .flip-anim {
+            animation: flipPage 0.15s ease-in-out;
+        }
+        @keyframes flipPage {
+            0% { transform: perspective(400px) rotateX(0deg); opacity: 1; }
+            50% { transform: perspective(400px) rotateX(90deg); opacity: 0.5; }
+            100% { transform: perspective(400px) rotateX(0deg); opacity: 1; }
+        }
+
+        /* The animation to drop the 19 to the bottom */
+        .slide-down-anim {
+            transform: translateY(35vh) scale(0.4);
+            opacity: 0.5;
+        }
+
+        /* The final message pop-up formatted for the pastel theme */
+        #birthday-message {
+            display: none;
+            position: absolute; /* Allows it to sit in the center */
+            text-align: center;
+            background: var(--white);
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            width: 85%;
+            transform: scale(0); /* Starts shrunk */
+        }
+
+        .pop-up-anim {
+            animation: popUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popUp {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #birthday-message h1 {
+            color: var(--red);
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        #birthday-message p {
+            color: var(--black);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <section id="intro">
+        <h1 class="fade-in">Helloo Bandariya (aka dentist ki favourite customer).</h1>
+        <p class="fade-in">Teen hi kaam hai tere pass sona, meetha khana ya "me ro dungi bolna" but abhi mat rona (kharab screen pe paani gira toh screen aur kharab hogi)</p>
+        <p class="fade-in" style="margin-top: 15px; font-size: 0.9rem;">(Keep scrolling, lazyass)</p>
+        <div class="scroll-indicator">↓</div>
+    </section>
+
+    <section id="basketball">
+        <div class="bounce fade-in">🏀</div>
+        <h2 class="fade-in">Master of none, Clown for all</h2>
+        <p class="fade-in">To the girl who somehow balances being a designer, a swimmer, a cinema nerd, a yapper, a beauftiful and great human (although VERY TOXIC), ofcourse a total DUMBASS and a basketball trash (koi na seekh jayegi merese i hope).</p>
+        <div class="scroll-indicator" style="color: var(--pastel-red);">↓</div>
+    </section>
+
+    <section id="bollywood">
+        <div class="float fade-in" style="font-size: 3rem; margin-bottom: 20px;">🎬 ✨</div>
+        <h2 class="fade-in">Cinema retard</h2>
+        <p class="fade-in">Ekdam hi bollywood retard hai tu, full of brain rot and CRAZYYY ENERGY (listening to iktara or mere bina in some corner lmao)</p> 
+        <div class="scroll-indicator">↓</div>
+    </section>
+
+    <section id="kumbhkaran">
+        <div class="float fade-in" style="font-size: 4rem;">💤</div>
+        <h2 class="fade-in">jagi ja, Kumbhkaran!</h2>
+        <p class="fade-in">You're officially a year older today. AP ke teen saal aur hai (ya maybe ahm ke lmao just kidding) abhi but vo toh nikal legi tu i know and we are just starting out on life bohot crazy exciting cheeze hongi abhi, provided tu apni lifestyle theek karle 😭</p>
+        <div class="scroll-indicator">↓</div>
+    </section>
+
+    <section id="finale">
+        <button id="runawayBtn">Tap Me</button>
+        <button id="hiddenBtn">Lmao dobi tap here</button>
+    </section>
+
+    <section id="countdown-overlay">
+        <div id="counter-wrapper">
+            <div id="years-heading">Years</div>
+            <div id="calendar-number">1</div>
+        </div>
+        
+        <div id="birthday-message">
+            <h1>Happy Birthday, Dhimahi!</h1>
+            <p>Have a great year (with less traumas) ahead and keep that crazy energy.</p>
+        </div>
+    </section>
+
+    <script>
+        // --- 1. SCROLL FADE-IN LOGIC ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.3 
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // --- 2. RAGEBAIT BUTTON LOGIC ---
+        const runawayBtn = document.getElementById('runawayBtn');
+        const hiddenBtn = document.getElementById('hiddenBtn');
+        let tapCount = 0;
+
+        runawayBtn.addEventListener('click', (e) => {
+            tapCount++;
+            
+            const sectionBounds = document.getElementById('finale').getBoundingClientRect();
+            const btnBounds = runawayBtn.getBoundingClientRect();
+            
+            const maxX = window.innerWidth - btnBounds.width - 20; 
+            const maxY = sectionBounds.height - btnBounds.height - 50;
+
+            const newX = Math.random() * maxX;
+            const newY = Math.random() * (window.innerHeight * 0.6); 
+
+            runawayBtn.style.left = `${newX}px`;
+            runawayBtn.style.top = `${newY}px`;
+
+            const texts = ["Missed!", "Too slow!", "Try again monkey", "Keep trying", "Almost!"];
+            if (tapCount <= texts.length) {
+                runawayBtn.innerText = texts[tapCount - 1];
+            } else {
+                runawayBtn.innerText = "Haha nope!";
+            }
+
+            if (tapCount === 5) {
+                hiddenBtn.style.display = 'block';
+            }
+        });
+
+        // --- 3. CINEMATIC TIMING LOGIC FOR COUNTDOWN ---
+        const overlay = document.getElementById('countdown-overlay');
+        const counterWrapper = document.getElementById('counter-wrapper');
+        const calNumber = document.getElementById('calendar-number');
+        const bdayMessage = document.getElementById('birthday-message');
+
+        hiddenBtn.addEventListener('click', () => {
+            // Hide the background scroll
+            document.body.style.overflow = 'hidden'; 
+            
+            // Show the red overlay screen
+            overlay.style.display = 'flex';
+            
+            let count = 1;
+            calNumber.innerText = count;
+
+            // This function creates the variable speed loop
+            function flipNextNumber() {
+                if (count < 19) {
+                    count++;
+                    calNumber.innerText = count;
+                    
+                    // Trigger the 3D flip animation
+                    calNumber.classList.remove('flip-anim');
+                    void calNumber.offsetWidth; // Force browser reflow
+                    calNumber.classList.add('flip-anim');
+
+                    // Math to make the delay start small (fast) and grow larger (slow)
+                    let progress = count / 19;
+                    let nextDelay = 40 + (Math.pow(progress, 4) * 350); 
+                    
+                    // Wait the calculated delay, then flip again
+                    setTimeout(flipNextNumber, nextDelay);
+                    
+                } else {
+                    // We hit 19! Take a 500ms pause here.
+                    setTimeout(() => {
+                        
+                        // Slide the wrapper (Years + 19) to the bottom
+                        counterWrapper.classList.add('slide-down-anim');
+                        
+                        // Wait a moment for the slide down to start, then pop up the card
+                        setTimeout(() => {
+                            bdayMessage.style.display = 'block';
+                            bdayMessage.classList.add('pop-up-anim');
+                        }, 400); 
+
+                    }, 500); // <-- The exact 500ms pause
+                }
+            }
+
+            // Start the sequence
+            setTimeout(flipNextNumber, 50);
+        });
+    </script>
+</body>
+</html>
